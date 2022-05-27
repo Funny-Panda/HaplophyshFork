@@ -50,7 +50,8 @@ def load_and_clean(*, save_to=None, random_state=42, malware_url_samples=50000, 
     return data
 
 
-def load_data(*, file_name='../data/cleaned-and-combined.csv', split_ratio=None, random_state=42):
+# def load_data(*, file_name='../data/cleaned-and-combined.csv', split_ratio=None, random_state=42):
+def load_data(*, file_name='../data/urldata.csv', split_ratio=None, random_state=42):
     data = pd.read_csv(file_name, index_col=False)
     data = data.sample(frac=1, random_state=42).reset_index(drop=True)  # shuffle
     if split_ratio is None:
@@ -74,7 +75,7 @@ def create_dataset_preloaded(word_vectorizer, char_vectorizer, data: pd.DataFram
         word_tokenizer = word_vectorizer.build_tokenizer()
         # wv = tf.constant(postpad_to(word_vectorizer.texts_to_sequences(data['url']), vec_length), name='word')
         wv = tf.constant(postpad_to(
-            data['url'].map(lambda url: [word_vectorizer.vocabulary_.get(a, -1)+2 for a in word_tokenizer(url)])  # 0 = padding, 1 = OOV
+            data['url'].map(lambda url: [word_vectorizer.vocabulary_.get(a, -1) + 2 for a in word_tokenizer(url)])  # 0 = padding, 1 = OOV
             , vec_length), name='word')
 
     if char_vectorizer is not None:
@@ -140,4 +141,3 @@ def create_dataset_generator(word_vectorizer, char_vectorizer, data: pd.DataFram
     )
 
     return ds
-
